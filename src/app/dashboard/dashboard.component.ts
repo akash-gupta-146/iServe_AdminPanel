@@ -362,8 +362,8 @@ export class DashboardComponent implements OnInit {
 
     var options = {
       chartArea: {
-        height: 120,
-        width:120
+        height: 100,
+        width:100
         // top: ,
       },
       width:80,
@@ -390,8 +390,8 @@ export class DashboardComponent implements OnInit {
     var options = {
       chartArea:
       {
-        width:120,
-        height:120,
+        width:100,
+        height:100,
       },
       width:80,
       height: 80,
@@ -415,8 +415,8 @@ export class DashboardComponent implements OnInit {
     var options = {
       chartArea:
       {
-        width:120,
-        height:120,
+        width:100,
+        height:100,
       },
       // is3D: true,
       width:80,
