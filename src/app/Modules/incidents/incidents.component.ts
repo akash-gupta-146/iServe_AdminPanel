@@ -30,8 +30,10 @@ export class IncidentsComponent implements OnInit {
   rating: number;
   duration: string;
   filterDashboardIncidents = {};
-  valTrue=true;
-
+  startDate: any;
+  endDate: any;
+  valTrue = true;
+  showGraphHeader = false;
 
   sortActive: string
   filterBy = {};
@@ -55,6 +57,7 @@ export class IncidentsComponent implements OnInit {
   // complaints: Array<any>;
   commentsHistory: any;
   showLoader: boolean = false;
+  showNoMore = false;
   filtercomplaints = [];
   currentPage = 1;
   comment: string;
@@ -88,38 +91,52 @@ export class IncidentsComponent implements OnInit {
     this.getComplaintStatus();
     this.subscribeRouteChanges();
   }
-  setId(id, i, statusId) {
+  starWidth:number
+  setId(row, i,) {
     this.currentIndex = i;
-    this.currentId = id;
-    this.currentStatusId = statusId;
+    this.currentId = row.id;
+    this.currentStatusId = row.statusId;
+     this.starWidth=  row.rating*86/5;
+     console.log(this.starWidth);
+     
+  }
+
+
+  goto(place: string) {
+    this.router.navigate(["/" + place]);
+    this.showGraphHeader = false;
   }
 
   subscribeRouteChanges() {
     this.activatedRoute.queryParams
       .subscribe((e: Params) => {
-        if(e.sId|| e.duration||e.pcId){
-          
-        this.statusId = Number(e.sId);
-        this.ProductCategoryId = Number(e.pcId) || Number(0);
-        this.graphType = e.gType || "";
-        this.stateId = e.stId || "";
-        this.duration = e.duration || "";
-        this.type = e.Type || "";
-        this.categoryType = e.cType || "";
-        this.warranty = e.warranty || "";
-        this.rating = parseFloat(e.rating) || 0;
+        if (e.sId || e.duration || e.pcId) {
 
-        if (e.sId) {
+          this.statusId = Number(e.sId);
+          this.ProductCategoryId = Number(e.pcId) || Number(0);
+          this.graphType = e.gType || "";
+          this.stateId = e.stId || "";
+          this.duration = e.duration || "";
+          this.type = e.Type || "";
+          this.categoryType = e.cType || "";
+          this.warranty = e.warranty || "";
+          this.rating = parseFloat(e.rating);
+          this.startDate = e.start || '';
+          this.endDate = e.end || '';
 
+          if (e.sId) {
 
-          this.getComplaints(this.statusId);
-        }
-        // pcId: 0, gType: 0, duration: 0
-        if (e.duration) {
-          this.getDashboardIncidents();
-          this.router.navigate(['/incidents'], { queryParams: { pcId: 0, gType: '', duration: '',Type:'',cType:'', stId:'', warranty:'',rating: 0 } });
+            this.getComplaints(this.statusId);
+          }
 
-        }
+          // pcId: 0, gType: 0, duration: 0
+          if (e.duration) {
+
+            this.showGraphHeader = true;
+            this.getDashboardIncidents();
+            // this.router.navigate(['/incidents'], { queryParams: { pcId: 0, gType: '', duration: '',Type:'',cType:'', stId:'', warranty:'',rating: 0 } });
+
+          }
         }
         else {
           this.router.navigate(['/incidents'], { queryParams: { sId: 0, } });
@@ -138,26 +155,31 @@ export class IncidentsComponent implements OnInit {
 
 
   getDashboardIncidents() {
+    this.filterDashboardIncidents = {};
 
-
-console.log("durationdurationdurationdurationdurationdurationduration");
-
+    if (this.duration === "byRange") {
+      this.filterDashboardIncidents['startDate'] = this.startDate;
+      this.filterDashboardIncidents['endDate'] = this.endDate;
+    }
 
     this.filterDashboardIncidents["duration"] = this.duration
-    this.filterDashboardIncidents["categoryType"] = this.categoryType
-    this.filterDashboardIncidents["categoryId"] = this.ProductCategoryId
     this.filterDashboardIncidents["graphType"] = this.graphType
+
+    this.filterDashboardIncidents["categoryType"] = this.categoryType
+    if (this.ProductCategoryId) {
+    }
+    this.filterDashboardIncidents["categoryId"] = this.ProductCategoryId
 
     if (this.type) {
       this.filterDashboardIncidents["type"] = this.type
     }
 
-    if (this.rating||this.rating==0) {
+    if (this.rating || this.rating == 0) {
       this.filterDashboardIncidents["rating"] = this.rating
     }
 
     if (this.warranty) {
-      this.filterDashboardIncidents["warranty"] = this.warranty
+      this.filterDashboardIncidents["warrantyStatus"] = this.warranty
     }
 
     if (this.stateId) {
@@ -169,15 +191,19 @@ console.log("durationdurationdurationdurationdurationdurationduration");
 
 
 
-
+    this.showLoader = true;
 
     if (this.graphType === "warranty") {
-      this.dashboardService.getProductWarrantyStatus(this.filterDashboardIncidents,this.valTrue)
+
+      this.dashboardService.getProductWarrantyStatus(this.filterDashboardIncidents, this.valTrue)
         .subscribe((res: any) => {
+          this.showLoader = false;
+          this.showNoMore = false;
           this.filtercomplaints = res;
 
         }, (err) => {
 
+          this.showLoader = false;
           this.tostservice.showNotificationFailure(err);
         }
         )
@@ -186,55 +212,80 @@ console.log("durationdurationdurationdurationdurationdurationduration");
     if (this.graphType === "rating") {
       this.dashboardService.getProductRating(this.filterDashboardIncidents, this.valTrue)
         .subscribe((res: any) => {
+          this.showLoader = false;
+          this.showNoMore = true;
           this.filtercomplaints = res;
         }, (err) => {
           this.tostservice.showNotificationFailure(err);
+          this.showLoader = false;
         }
         )
     }
     if (this.graphType === "region") {
       this.dashboardService.getStateByStatus(this.filterDashboardIncidents, this.valTrue)
         .subscribe((res: any) => {
+          this.showLoader = false;
+          this.showNoMore = true;
           this.filtercomplaints = res;
         }, (err) => {
           this.tostservice.showNotificationFailure(err);
+          this.showLoader = false;
         }
         )
     }
     if (this.graphType === "status") {
       this.dashboardService.get_Product_Status(this.filterDashboardIncidents, this.valTrue)
         .subscribe((res: any) => {
+          this.showLoader = false;
+          this.showNoMore = true;
           this.filtercomplaints = res;
         }, (err) => {
           this.tostservice.showNotificationFailure(err);
+          this.showLoader = false;
         }
         )
     }
     if (this.graphType === "incident-age") {
       this.dashboardService.getProductIncidentAge(this.filterDashboardIncidents, this.valTrue)
         .subscribe((res: any) => {
+          this.showLoader = false;
+          this.showNoMore = true;
           this.filtercomplaints = res;
         }, (err) => {
           this.tostservice.showNotificationFailure(err);
+          this.showLoader = false;
         }
         )
     }
     if (this.graphType === "avg") {
       this.dashboardService.getAVG(this.filterDashboardIncidents, this.valTrue)
         .subscribe((res: any) => {
+          this.showLoader = false;
+          this.showNoMore = true;
           this.filtercomplaints = res;
         }, (err) => {
           this.tostservice.showNotificationFailure(err);
+          this.showLoader = false;
+        })
+    }
+    if (this.graphType === "mttr") {
+      this.dashboardService.getMTTR(this.filterDashboardIncidents, this.valTrue)
+        .subscribe((res: any) => {
+          this.showLoader = false;
+          this.showNoMore = true;
+          this.filtercomplaints = res;
+        }, (err) => {
+          this.tostservice.showNotificationFailure(err);
+          this.showLoader = false;
         })
     }
 
-    console.log(this.filterDashboardIncidents);
-    
+
 
   }
 
 
-  getComplaints(sId ) {
+  getComplaints(sId) {
     this.selectedHeadingId = sId;
     this.currentPage = 1;
     if (this.statusId == 0) {
@@ -258,6 +309,7 @@ console.log("durationdurationdurationdurationdurationdurationduration");
   getAllComplaints() {
 
     this.showLoader = true;
+    this.showNoMore = false;
     this.incidentService.getAllComplaint(this.currentPage)
       .subscribe((res: any) => {
         // this.complaints = res;
@@ -276,20 +328,21 @@ console.log("durationdurationdurationdurationdurationdurationduration");
   getFilterComplants(sId: number, ) {
     this.filtercomplaints = [];
     this.showLoader = true;
+    this.showNoMore = false;
     this.currentPage = 1;
     // if ( this.statusId) {
-      if (this.statusId ) {
-        this.filterBy['statusId'] = this.statusId || sId;
-      }
-      // if (this.ProductCategoryId) {
-      //   this.filterBy["categoryId"] = this.ProductCategoryId;
-      // }
-      // if (this.stateId != "0" && this.stateId != "") {
-      //   this.filterBy['location'] = this.stateId;
-      // }
-      // if (this.incidentCategoryId) {
-      //   this.filterBy['complaintCategoryId'] = this.incidentCategoryId;
-      // }
+    if (this.statusId) {
+      this.filterBy['statusId'] = this.statusId || sId;
+    }
+    // if (this.ProductCategoryId) {
+    //   this.filterBy["categoryId"] = this.ProductCategoryId;
+    // }
+    // if (this.stateId != "0" && this.stateId != "") {
+    //   this.filterBy['location'] = this.stateId;
+    // }
+    // if (this.incidentCategoryId) {
+    //   this.filterBy['complaintCategoryId'] = this.incidentCategoryId;
+    // }
     // } else {
     //   this.getAllComplaints();
     // }
@@ -325,10 +378,13 @@ console.log("durationdurationdurationdurationdurationdurationduration");
 
 
   lodeMore() {
+    this.showLoader = true;
+
+    this.showNoMore = false;
+
 
     if (this.duration) {
 
-      this.showLoader = true;
       this.getDashboardIncidents()
 
 
@@ -336,7 +392,6 @@ console.log("durationdurationdurationdurationdurationdurationduration");
 
     } else {
       if (this.selectedHeadingId === 0) {
-        this.showLoader = true;
         this.incidentService.getAllComplaint(this.currentPage + 1)
           .subscribe((res: Array<any>) => {
             this.x = false;
@@ -344,6 +399,8 @@ console.log("durationdurationdurationdurationdurationdurationduration");
 
               this.filtercomplaints = this.filtercomplaints.concat(res);
               this.currentPage++;
+            } else {
+              this.showNoMore = true;
             }
 
             this.showLoader = false;
@@ -351,25 +408,30 @@ console.log("durationdurationdurationdurationdurationdurationduration");
             (err) => {
               this.x = true;
               this.showLoader = false;
+              this.showNoMore = false;
+
               this.tostservice.showNotificationFailure(err)
             })
       }
       else {
-        this.showLoader = true;
         this.incidentService.getFillterComplaint({ "statusId": this.statusId }, this.currentPage + 1)
           .subscribe((res: Array<any>) => {
             this.x = false;
+            this.showLoader = false;
 
             if (res.length) {
 
               this.filtercomplaints = this.filtercomplaints.concat(res);
               this.currentPage++;
+            } else {
+
+              this.showNoMore = true;
             }
 
-            this.showLoader = false;
           },
             (err) => {
               this.x = true;
+              this.showNoMore = false;
 
               this.showLoader = false;
               this.tostservice.showNotificationFailure(err)
@@ -383,9 +445,14 @@ console.log("durationdurationdurationdurationdurationdurationduration");
 
   isAscn(val) {
     this.isAsc = val;
+    if(this.sortActive){
+
+      this.sortBy(this.sortActive);
+    }
   }
 
   sortBy(val) {
+
     this.currentRouteParams();
 
     this.sortActive = val;
@@ -398,7 +465,7 @@ console.log("durationdurationdurationdurationdurationdurationduration");
           this.showLoader = false;
         }, (err) => {
           this.tostservice.showNotificationFailure(err)
-          this.showLoader = true;
+          this.showLoader = false;
 
         })
 
@@ -412,7 +479,7 @@ console.log("durationdurationdurationdurationdurationdurationduration");
           this.showLoader = false;
         }, (err) => {
           this.tostservice.showNotificationFailure(err)
-          this.showLoader = true;
+          this.showLoader = false;
 
         })
     }

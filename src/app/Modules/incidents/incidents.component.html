@@ -1,10 +1,10 @@
 <h4 class="heading">Incidents</h4>
 <div class="card">
 
-  <div class="card-header card-header-primary">
+  <div *ngIf="!showGraphHeader" class="card-header card-header-primary">
     <div class="d-flex justify-content-between float-right">
       <!-- <h4 class="card-title ">Incidents</h4> -->
-      <div class="dropdown " >
+      <div class="dropdown ">
         <a class="nav-link dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
           aria-expanded="false">
           <i class="material-icons hover-cursor"> filter_list </i>
@@ -49,7 +49,27 @@
 
     </ul>
   </div>
-  
+  <div *ngIf="showGraphHeader" class="card-header card-header-primary">
+    <div class="d-flex justify-content-between ">
+
+      <h4 class="card-title ">Incidents Filtered By {{graphType}}</h4>
+     
+      <ul class="nav nav-tabs">
+
+        <button (click)="goto('dashboard')" class="btn  btn-primary  float-right">
+          Go To Dashboard
+        </button>
+
+
+        <button (click)="goto('incidents')" class="btn  btn-primary  float-right">
+          all Incidents
+        </button>
+
+
+      </ul>
+    </div>
+
+  </div>
 
   <div class="card-body">
     <div class="search-results" infiniteScroll [infiniteScrollDistance]="1" [immediateCheck]="true"
@@ -57,40 +77,40 @@
       <div class="table-responsive" id="coll">
         <table class="table table-hover ">
 
-            <thead class=" text-primary">
+          <thead class=" text-primary">
 
-              <th *ngFor="let head of headerRow">{{ head }}</th>
-
-
-            </thead>
-            <tbody *ngFor="let row of filtercomplaints let i =index">
-
-              <tr  (click)="setId(row.id, i, row.statusId)" id="heading{{i}}" data-toggle="collapse" attr.href="#collapseExample{{i}}">
-                <td>
-                  <span class="mainColor">{{ i+1 }}</span>
-
-                  {{row.number}}</td>
-                <td>{{row.createdAt | date: 'dd MMM, yyyy'}}</td>
-                <td>{{row.productName |fixedLength}}</td>
-                <td>{{row.description| fixedLength }}</td>
-                <td>
-                  {{row.productCategoryName | fixedLength}}
-                </td>
-                <td>{{row.againstCategoryName}}</td>
-                <td>{{row.priority}}</td>
-
-                <td>
-                  <span class="badge badge-pill" [style.background]="row.statusColor">{{ row.statusName | fixedLength
-                    }}</span>
+            <th *ngFor="let head of headerRow">{{ head }}</th>
 
 
-                </td>
+          </thead>
+          <tbody *ngFor="let row of filtercomplaints let i =index">
+
+            <tr (click)="setId(row, i )" id="heading{{i}}" data-toggle="collapse" attr.href="#collapseExample{{i}}">
+              <td>
+                <span class="mainColor">{{ i+1 }}</span>
+
+                {{row.number}}</td>
+              <td>{{row.createdAt | date: 'dd MMM, yyyy'}}</td>
+              <td>{{row.productName |fixedLength}}</td>
+              <td>{{row.description| fixedLength }}</td>
+              <td>
+                {{row.productCategoryName | fixedLength}}
+              </td>
+              <td>{{row.againstCategoryName}}</td>
+              <td>{{row.priority}}</td>
+
+              <td>
+                <span class="badge badge-pill" [style.background]="row.statusColor">{{ row.statusName | fixedLength
+                  }}</span>
+
+
+              </td>
 
 
 
-              </tr>
+            </tr>
 
-              <tr class="collapse tabel-detail col-md-8 col-lg-8 " data-parent="#coll" attr.id="collapseExample{{i}}">
+            <tr class="collapse tabel-detail col-md-8 col-lg-8 " data-parent="#coll" attr.id="collapseExample{{i}}">
                 <td colspan=8 class=" incident-details  ">
                   <div class="row p-2 auto-cursor">
                     <div class="card card-nav-tabs description word-break detail-box" *ngIf="row.description" style="width:94% ;margin-top: 0;margin-bottom: 0; ">
@@ -406,9 +426,9 @@
   
   
                             </div>
-                            <div class="col-md- 6 col-lg-6 col-sm-6">
+                            <div *ngIf="row.fixedInfo[1]?.length>1" class="col-md- 6 col-lg-6 col-sm-6">
   
-                              <div *ngIf="row.fixedInfo[1]">
+                              <div *ngIf="row.fixedInfo[1]?.length>1">
   
                                 <b>Date:</b>{{row.fixedInfo[1].createdAt | date:'dd MMM, yyyy'}}
                               </div>
@@ -416,14 +436,15 @@
                                 <b>Time:</b>
                                 {{row.fixedInfo[1].createdAt | date: 'hh : mm a'}}
                               </div>
-                              <div class="d-flex">
-                                  <i class="material-icons" style="color:orange;width: 25px;"> star_rate </i>
-                                  <i class="material-icons" style="color:orange;width: 25px;"> star_rate </i>
-                                  <i class="material-icons" style="color:orange;width: 25px;"> star_rate </i>
-                                  <i class="material-icons" style="color:orange;width: 25px;"> star_rate </i>
-                                  <i class="material-icons" style="color:gray;width: 25px;"> star_rate </i>
+                              <div class="crop" [style.width.px]="starWidth" [title]="rating">
+                                <div style="width:86px; " class="d-flex">
+                                    <span>  <i class="material-icons" > star_rate </i> </span>
+                                    <span>  <i class="material-icons" > star_rate </i> </span>
+                                    <span>  <i class="material-icons" > star_rate </i> </span>
+                                    <span>  <i class="material-icons" > star_rate </i> </span>
+                                    <span>  <i class="material-icons"> star_rate </i></span>                                 </div>
                                 </div>
-                                <div>
+                                <div >
                                   <b>Comment:</b> {{row.fixedInfo[1].comment}}
                                 </div>
                             </div>
@@ -431,40 +452,7 @@
                         </div>
   
                       </div>
-                    <!-- rating -->
-                    <!-- <div *ngIf="row.rating" class="col-sm-12 col-md-6 col-lg-4 incident-detail-box">
-                      <div class="row">
-                        <div class="collg-12 col-sm-12">
-                          <h4>
-                            <b>Feedback</b>
-                          </h4>
-                        </div>
-                      </div>
-                      <div class="card-body" style="padding:15px;">
-                        <div class="row">
-                          <div class="col-md-4 col-lg-4 col-sm-4 ">
-                            <img class="product-image" src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/sign-warning-icon.png" />
-
-
-                          </div>
-                          <div *ngIf="row.fixedInfo[1]">
-                            <b>Date:</b>{{row.fixedInfo[1].createdAt | date:'dd MMM, yyyy'}}
-                            <b>Time:</b>{{row.fixedInfo[1].createdAt | date: 'hh : mm a'}}
-
-                          </div>
-                          <div class="d-flex">
-                            <i class="material-icons" style="color:orange;width: 25px;"> star_rate </i>
-                            <i class="material-icons" style="color:orange;width: 25px;"> star_rate </i>
-                            <i class="material-icons" style="color:orange;width: 25px;"> star_rate </i>
-                            <i class="material-icons" style="color:orange;width: 25px;"> star_rate </i>
-                            <i class="material-icons" style="color:gray;width: 25px;"> star_rate </i>
-                          </div>
-                          <div>
-                            <b>Comment:</b> {{row.fixedInfo[1].comment}}
-                          </div>
-                        </div>
-                      </div>
-                    </div> -->
+                   
                   </div>
 
                   <div class="d-flex justify-content-center">
@@ -482,7 +470,7 @@
                   </div>
                 </td>
               </tr>
-            </tbody>
+          </tbody>
           <div class="col-md-8 col-lg-8" style="background: gray">
 
           </div>
@@ -501,6 +489,14 @@
                 <i *ngIf="showLoader" class="fa fa-spinner fa-spin mainColor"></i>
               </td>
             </tr>
+            <tr *ngIf="showNoMore">
+
+                <td colspan="9">
+                  <div class="text-center">
+                    <h3 class="noContent-text">No more incidents</h3>
+                  </div>
+                </td>
+              </tr>
           </tfoot>
         </table>
       </div>

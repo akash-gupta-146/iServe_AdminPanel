@@ -43,24 +43,25 @@ export class DashboardComponent implements OnInit {
   filterByDate = "month";
 
   filterId: number;
-  filterRange: string;
   showRange = false;
   rating = [];
-
+  ratingId = [];
+  avgId = [];
+  mttrId = [];
+  warrantyId = [];
+  statusIdChart = [];
+  incidentId = [];
   carryforwardChart = [];
   newChart = [];
   rejectedChart = [];
   fixedChart = [];
-  // rating0: number;
-  // rating1: number;
-  // rating2: number;
-  // rating3: number;
-  // rating4: number;
-  // rating5: number;
+  statusType = ['CARRYFORWARD', 'NEW', 'FIXED', 'REJECTED',];
+  
 
   dateRange = new DateRange;
   showRatingChart = true;
   categoryName = 'ALL APPLIANCES';
+  categoryType = 'parent';
   statusByProductCatIds = [];
 
 
@@ -78,8 +79,6 @@ export class DashboardComponent implements OnInit {
 
     this.dateRange = new DateRange();
     this.filterByDate = value;
-    // console.log(this.filterByDate)
-    this.filterRange = "";
     this.getFilter();
     this.getCharts();
 
@@ -100,35 +99,37 @@ export class DashboardComponent implements OnInit {
 
   filterByRange(value) {
 
-    this.filterByDate = "";
-    this.filterRange = value;
+    this.filterByDate = value;
     this.getFilter();
     this.getCharts();
 
   }
 
   getFilter() {
+    this.filter = {};
 
-    if (this.filterRange) {
-      this.filter = {};
+    if (this.filterByDate) {
+      this.filter["duration"] = this.filterByDate;
 
-      this.filter["duration"] = this.filterRange;
-      this.filter["startDate"] = this.dateRange.startDate;
-      this.filter["endDate"] = this.dateRange.endDate;
+      if (this.filterByDate === "byRange") {
 
-    } else {
-      if (this.filterByDate) {
-        this.filter = {};
-        this.filter["duration"] = this.filterByDate;
-
+        this.filter["startDate"] = this.dateRange.startDate;
+        this.filter["endDate"] = this.dateRange.endDate;
       }
+
     }
+
+
 
     if (this.filterId) {
       console.log(this.filterId);
 
       // console.log(this.filterId)
       this.filter["categoryId"] = this.filterId;
+      this.categoryType = 'child';
+    } else {
+      this.categoryType = 'parent';
+
     }
 
 
@@ -141,6 +142,7 @@ export class DashboardComponent implements OnInit {
     // this.getFilter(id)
     this.categoryName = Category.name;
     this.filterId = Category.id;
+    this.categoryType = 'child';
     this.getFilter();
     this.getCharts();
   }
@@ -176,13 +178,18 @@ export class DashboardComponent implements OnInit {
 
 
 
+  routeToIncidents(pc?, gtype?, type?, stid?, wrnty?, rating?) {
+    this.router.navigate(['/incidents'], { queryParams: { duration: this.filterByDate, cType: this.categoryType, pcId: pc, gType: gtype, Type: type, stId: stid, warranty: wrnty, rating: rating, start: this.dateRange.startDate, end: this.dateRange.endDate, } });
+
+  }
 
   get_product_rating_chart() {
+    this.rating = [[]];
 
     this.dashboardservice.getProductRating(this.filter, this.valFalse)
       .subscribe((res: any) => {
         this.rating = [[]];
-
+        this.ratingId = [[]]
 
 
         this.rating[0].push('rating');
@@ -190,12 +197,24 @@ export class DashboardComponent implements OnInit {
           this.rating[0].push(res[0].ratingInfo[i].name);
         }
 
+        for (let k = 0; k < res[0].ratingInfo.length; k++) {
+
+          // if(res[0].ratingInfo[k].categoryId){
+
+          // }
+
+          this.ratingId.push(res[0].ratingInfo[k].id);
+          console.log(this.ratingId);
+        }
+
         for (let i = 0; i < res.length; i++) {
           this.rating[i + 1] = [];
           this.rating[i + 1].push(res[i].rating);
           for (let j = 0; j < res[i].ratingInfo.length; j++) {
             this.rating[i + 1].push(res[i].ratingInfo[j].count);
+
           }
+
         }
 
 
@@ -217,9 +236,10 @@ export class DashboardComponent implements OnInit {
     let options = {
       height: 200,
 
-      // chartArea: {
-      //   left: 100,
-      // },
+    // chartArea:{
+    //   height:200,
+    //   width:120,
+    // },
 
 
       seriesType: 'bars',
@@ -238,20 +258,18 @@ export class DashboardComponent implements OnInit {
     };
 
     let chart = new google.visualization.ComboChart(document.getElementById('Rating_Chart'));
-    google.visualization.events.addListener(chart, 'select', ()=>{
-              var selectedItem = chart.getSelection()[0];
-              console.log(selectedItem)
-      
-         console.log(this.rating);
-         
-               if (selectedItem) {
-        
-                // routeToIncidents(pc?,gtype?,dur?,type?,ctype?,stid?,wrnty?,rating?) {
+    google.visualization.events.addListener(chart, 'select', () => {
+      var selectedItem = chart.getSelection()[0];
 
-         this.routeToIncidents('','rating','',);
-               }
-              });
-        
+
+
+      if (selectedItem) {
+
+
+        this.routeToIncidents(this.ratingId[selectedItem.column], 'rating', '', '', '', selectedItem.row);
+      }
+    });
+
 
 
     chart.draw(data, options);
@@ -260,10 +278,6 @@ export class DashboardComponent implements OnInit {
 
 
 
-  routeToIncidents(pc?,gtype?,type?,ctype?,stid?,wrnty?,rating?) {
-    this.router.navigate(['/incidents'], { queryParams: { pcId: pc, gType: gtype, duration: this.filterByDate,Type : type, cType: ctype, stId: stid, warranty:wrnty,rating : rating } });
-
-  }
   //  incidents weekly report statrs here
 
   get_Product_Status() {
@@ -271,7 +285,7 @@ export class DashboardComponent implements OnInit {
     this.statusByProductCat = [];
     this.dashboardservice.get_Product_Status(this.filter, this.valFalse)
       .subscribe((res: any) => {
-
+        this.statusIdChart = [];
         this.carryforwardChart = [];
         this.newChart = [];
         this.rejectedChart = [];
@@ -283,10 +297,10 @@ export class DashboardComponent implements OnInit {
         this.newChart.push(['Product Category', 'New']);
         this.rejectedChart.push(['Product Category', 'Rejected']);
         this.fixedChart.push(['Product Category', 'Fixed']);
-        this.statusByProductCat.push(['Appliances', 'Carry Forward', 'New', 'Rejected', 'Fixed',])
+        this.statusByProductCat.push(['Appliances', 'Carry Forward', 'New', 'Fixed', 'Rejected',])
         res.forEach(element => {
-          this.statusByProductCat.push([element.name, element.CARRYFORWARD, element.NEW, element.REJECTED, element.FIXED]);
-
+          this.statusByProductCat.push([element.name, element.CARRYFORWARD, element.NEW, element.FIXED, element.REJECTED,]);
+          this.statusIdChart.push([element.id])
           this.carryforwardChart.push([element.name, element.CARRYFORWARD]);
           this.newChart.push([element.name, element.NEW]);
           this.rejectedChart.push([element.name, element.REJECTED]);
@@ -309,6 +323,7 @@ export class DashboardComponent implements OnInit {
 
   product_status_Chart() {
     let data = google.visualization.arrayToDataTable(this.statusByProductCat);
+
 
     let options = {
       height: 200,
@@ -335,11 +350,9 @@ export class DashboardComponent implements OnInit {
       var selectedItem = chart.getSelection()[0];
 
       if (selectedItem) {
-        // console.log(this.statusByProductCatIds[selectedItem.row]);
 
-        console.log(selectedItem);
+        this.routeToIncidents(this.statusIdChart[selectedItem.row], 'status', this.statusType[selectedItem.column - 1], '', '', '');
 
-        //  this.routeToIncidents(],);
       }
     });
 
@@ -362,11 +375,11 @@ export class DashboardComponent implements OnInit {
 
     var options = {
       chartArea: {
+        width: 100,
         height: 100,
-        width:100
-        // top: ,
+
       },
-      width:80,
+      width: 80,
       height: 80,
       // top: 50,
       // is3D: true,
@@ -381,6 +394,17 @@ export class DashboardComponent implements OnInit {
 
     var chart = new google.visualization.PieChart(document.getElementById('CarryForward_Chart'));
 
+    google.visualization.events.addListener(chart, 'select', () => {
+      var selectedItem = chart.getSelection()[0];
+
+      if (selectedItem) {
+
+        this.routeToIncidents(this.statusIdChart[selectedItem.row], 'status', 'CARRYFORWARD', '', '', '');
+
+      }
+    });
+
+
     chart.draw(data, options);
   }
   New_chart() {
@@ -393,9 +417,8 @@ export class DashboardComponent implements OnInit {
         width:100,
         height:100,
       },
-      width:80,
+      width: 80,
       height: 80,
-      // is3D: true,
       legend: { position: 'none', maxLines: 8 },
       colors: ['#e91e63', '#01adc2', '#fd9710', '#4ba64f', '#9d36b3', '#FFFF00', '#AA00FF', '#9E9D24'],
 
@@ -405,6 +428,15 @@ export class DashboardComponent implements OnInit {
 
     var chart = new google.visualization.PieChart(document.getElementById('New_Chart'));
 
+    google.visualization.events.addListener(chart, 'select', () => {
+      var selectedItem = chart.getSelection()[0];
+
+      if (selectedItem) {
+
+        this.routeToIncidents(this.statusIdChart[selectedItem.row], 'status', 'NEW', '', '', '');
+
+      }
+    });
     chart.draw(data, options);
   }
 
@@ -415,12 +447,11 @@ export class DashboardComponent implements OnInit {
     var options = {
       chartArea:
       {
-        width:100,
-        height:100,
+        width: 80,
+        height: 80,
       },
-      // is3D: true,
       width:80,
-      height: 80,
+      height:80,
       legend: { position: 'none', maxLines: 8 },
       colors: ['#e91e63', '#01adc2', '#fd9710', '#4ba64f', '#9d36b3', '#FFFF00', '#AA00FF', '#9E9D24'],
 
@@ -430,6 +461,15 @@ export class DashboardComponent implements OnInit {
 
     var chart = new google.visualization.PieChart(document.getElementById('Fixed_Chart'));
 
+    google.visualization.events.addListener(chart, 'select', () => {
+      var selectedItem = chart.getSelection()[0];
+
+      if (selectedItem) {
+
+        this.routeToIncidents(this.statusIdChart[selectedItem.row], 'status', 'FIXED', '', '', '');
+
+      }
+    });
     chart.draw(data, options);
   }
 
@@ -438,13 +478,12 @@ export class DashboardComponent implements OnInit {
     var data = google.visualization.arrayToDataTable(this.rejectedChart);
 
     var options = {
-      chartArea:
-      {
-        width:120,
-        height:120,
+      chartArea: {
+        width: 120,
+        height: 120,
+
       },
-      // is3D: true,
-      width:80,
+      width: 80,
       height: 80,
       legend: { position: 'none', maxLines: 8 },
       colors: ['#e91e63', '#01adc2', '#fd9710', '#4ba64f', '#9d36b3', '#FFFF00', '#AA00FF', '#9E9D24'],
@@ -455,6 +494,15 @@ export class DashboardComponent implements OnInit {
 
     var chart = new google.visualization.PieChart(document.getElementById('Rejected_Chart'));
 
+    google.visualization.events.addListener(chart, 'select', () => {
+      var selectedItem = chart.getSelection()[0];
+
+      if (selectedItem) {
+
+        this.routeToIncidents(this.statusIdChart[selectedItem.row], 'status', 'REJECTED', '', '', '');
+
+      }
+    });
     chart.draw(data, options);
   }
 
@@ -480,7 +528,10 @@ export class DashboardComponent implements OnInit {
 
       let options = {
         height: 300,
-
+        chartArea: {
+          height: 320,
+          // width: 500,
+        },
         region: 'IN',
         resolution: 'provinces',
         colorAxis: { colors: ['#01bcd7'] },
@@ -500,7 +551,9 @@ export class DashboardComponent implements OnInit {
         if (selectedItem) {
 
 
-          this.routeToIncidents(0, 0, 0, this.stateCount[selectedItem.row + 1][0]);
+
+
+          this.routeToIncidents('', 'region', '', this.stateCount[selectedItem.row + 1][0], '', '');
         }
       });
 
@@ -519,12 +572,10 @@ export class DashboardComponent implements OnInit {
         this.mttrTillDate.push(['Appliances', 'Customer', 'Engineer', 'Repair', 'avg'])
         console.log(res[0]["avgResolveTimeInfo"]);
         res[0]["avgResolveTimeInfo"].forEach(element => {
-          // ["'avgResolveTimeInfo'"]
-          // console.log(element);
 
+          this.avgId.push([element.id])
 
-          //  for (const key in element) {
-          this.mttrTillDate.push([element.name, parseFloat(element.customer), parseFloat(element.engineer), parseFloat(element.repair),parseFloat(element.avgResolveTime)])
+          this.mttrTillDate.push([element.name, parseFloat(element.customer), parseFloat(element.engineer), parseFloat(element.repair), parseFloat(element.avgResolveTime)])
 
           //  }
 
@@ -546,27 +597,39 @@ export class DashboardComponent implements OnInit {
     var options = {
 
       height: 200,
-      chartArea: {
-        height: 200,
-        top: 50,
-      },
+      
 
       seriesType: 'bars',
       series: { 3: { type: 'line' } },
 
       legend: { position: 'top', maxLines: 3 },
-      // bar: { groupWidth: '80%' },
+      bar: { groupWidth: '80%' },
       // isStacked: true,
       colors: ['#e91e63', '#01adc2', '#fd9710', '#4ba64f', '#9d36b3', '#FFFF00', '#AA00FF', '#9E9D24'],
-      // animation: {
-      //   "startup": true,
-      //   duration: 600,
-      //   easing: 'in-out'
-      // }
+      animation: {
+        "startup": true,
+        duration: 600,
+        easing: 'in-out'
+      }
     };
 
 
     var chart = new google.visualization.ComboChart(document.getElementById('repair_time'));
+    google.visualization.events.addListener(chart, 'select', () => {
+      var selectedItem = chart.getSelection()[0];
+      console.log(selectedItem)
+
+
+      if (selectedItem) {
+
+        // routeToIncidents(pc?,gtype?,type?,stid?,wrnty?,rating?) {
+
+        this.routeToIncidents(this.avgId[selectedItem.row], 'avg', '', '', '', '');
+      }
+    });
+
+
+
 
     chart.draw(data, options);
   }
@@ -585,7 +648,7 @@ export class DashboardComponent implements OnInit {
         this.outOfWarranty.push(["Product Name", "Count"])
 
         res[0]["warrantyInfo"].forEach(element => {
-
+          this.warrantyId.push([element.id])
           this.outOfWarranty.push([element.name, element.count]);
 
         });
@@ -625,6 +688,10 @@ export class DashboardComponent implements OnInit {
     var options = {
       title: ' out of warranty',
       // is3D: true,
+      chartArea: {
+        height: 120,
+
+      },
       legend: { position: 'bottom', maxLines: 8 },
 
       // pieSliceText:"value",
@@ -636,16 +703,35 @@ export class DashboardComponent implements OnInit {
 
     var chart = new google.visualization.PieChart(document.getElementById('out_Warranty_Status'));
 
+
+    google.visualization.events.addListener(chart, 'select', () => {
+      var selectedItem = chart.getSelection()[0];
+      console.log(selectedItem)
+
+
+      if (selectedItem) {
+
+        // routeToIncidents(pc?,gtype?,type?,stid?,wrnty?,rating?) {
+
+        this.routeToIncidents(this.warrantyId[selectedItem.row], 'warranty', '', '', 'outsideWarranty', '');
+      }
+    });
+
+
+
     chart.draw(data, options);
   }
 
-  
+
   In_Warranty_Status_chart() {
 
     var data = google.visualization.arrayToDataTable(this.inWarranty);
     var options = {
       title: 'In warranty',
-       is3D: true,
+      chartArea:{
+length:120,
+      },
+     // is3D: true,
       legend: { position: 'bottom', maxLines: 8 },
       // pieSliceText: "value",
       colors: ['#e91e63', '#01adc2', '#fd9710', '#4ba64f', '#9d36b3', '#FFFF00', '#AA00FF', '#9E9D24'],
@@ -654,6 +740,18 @@ export class DashboardComponent implements OnInit {
 
 
     var chart = new google.visualization.PieChart(document.getElementById('in_Warranty_Status'));
+    google.visualization.events.addListener(chart, 'select', () => {
+      var selectedItem = chart.getSelection()[0];
+      console.log(selectedItem)
+
+
+      if (selectedItem) {
+
+        // routeToIncidents(pc?,gtype?,type?,stid?,wrnty?,rating?) {
+
+        this.routeToIncidents(this.warrantyId[selectedItem.row], 'warranty', '', '', 'inWarranty', '');
+      }
+    });
 
     chart.draw(data, options);
   }
@@ -673,12 +771,16 @@ export class DashboardComponent implements OnInit {
 
   }
   Product_Incident_Age_chart(data: any[]) {
-
+    this.incidentId = [];
     var dataTable: any = [[]];
 
     dataTable[0].push('range');
     for (let i = 0; i < data[0].ageInfo.length; i++) {
       dataTable[0].push(data[0].ageInfo[i].name);
+    }
+
+    for (let k = 0; k < data[0].ageInfo.length; k++) {
+      this.incidentId.push(data[0].ageInfo[k].id);
     }
 
     for (let i = 0; i < data.length; i++) {
@@ -691,7 +793,6 @@ export class DashboardComponent implements OnInit {
 
 
     var data1 = google.visualization.arrayToDataTable(dataTable);
-    // console.log(this.incidentAge)
     var options = {
       height: 200,
 
@@ -705,30 +806,40 @@ export class DashboardComponent implements OnInit {
 
     var chart = new google.visualization.ComboChart(document.getElementById('Product_Incident_Age'));
 
+
+    google.visualization.events.addListener(chart, 'select', () => {
+      var selectedItem = chart.getSelection()[0];
+      console.log(selectedItem)
+
+
+      if (selectedItem) {
+        console.log(this.incidentId[selectedItem.column - 1]);
+
+
+        this.routeToIncidents(this.incidentId[selectedItem.column - 1], 'incident-age', dataTable[selectedItem.row + 1][0], '', '', '');
+      }
+    });
+
+
     chart.draw(data1, options);
   }
-
-
-
-
-
-
-
-
-
 
   // mean time to repair start here
   getMeanTime() {
     // this.meanTiming=[];
 
-    this.dashboardservice.getMTTR(this.filter,this.valFalse)
+    this.dashboardservice.getMTTR(this.filter, this.valFalse)
       .subscribe((res: any) => {
 
-
+        this.mttrId = [];
         this.meanTiming = [[]]
         this.meanTiming[0].push('avg');
         for (let i = 0; i < res[0].mttrInfo.length; i++) {
           this.meanTiming[0].push(res[0].mttrInfo[i].name);
+        }
+
+        for (let k = 0; k < res[0].mttrInfo.length; k++) {
+          this.mttrId.push(res[0].mttrInfo[k].id);
         }
 
         for (let i = 0; i < res.length; i++) {
@@ -747,18 +858,12 @@ export class DashboardComponent implements OnInit {
     var data = google.visualization.arrayToDataTable(this.meanTiming);
 
     var options = {
-      height:200,
-      chartArea: {
-        left: 80,
-      },
-      // hAxis: {
-      //   title: 'Mean Time To Repair (in days)',
-      //   minValue: 0
+      height: 200,
+
+      // chartArea: {
+      //   left: 80,
       // },
 
-      // vAxis: {
-      //   title: 'Appliances'
-      // },
       legend: { position: 'top', maxLines: 7 },
       bar: { groupWidth: '75%' },
       isStacked: true,
@@ -772,6 +877,25 @@ export class DashboardComponent implements OnInit {
     };
 
     var chart = new google.visualization.BarChart(document.getElementById('time_to_repair'));
+
+
+
+    google.visualization.events.addListener(chart, 'select', () => {
+      var selectedItem = chart.getSelection()[0];
+
+
+      if (selectedItem) {
+
+
+
+        this.routeToIncidents(this.mttrId[selectedItem.column - 1], 'mttr', this.meanTiming[selectedItem.row + 1][0], '', '', '');
+      }
+    });
+
+
+
+
+
 
     chart.draw(data, options);
   }
