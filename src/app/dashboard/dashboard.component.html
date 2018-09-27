@@ -60,7 +60,7 @@
       </div>
     </div>
   </div>
-  <div class="card-header card-header-primary printHeader" style="margin-bottom:20px; display: none; ">
+  <div class="card-header card-header-primary printHeader" style="display: none;padding: 0;">
     <div class="nav-tabs-navigation">
       <div class="nav-tabs-wrapper space-between">
         <div class="addBar">
@@ -95,17 +95,15 @@
   </div>
 
 
-  <div class="container-fluid" style="z-index: 0;">
-    <div *ngIf="role=='management'" class="row">
+  <div class="container-fluid containerPrint" style="z-index: 0;">
+     <div *ngIf="role=='management'" class="row deksCardContainer">
 
       <div class="col-lg-3 col-md-3 col-sm-6">
         <div class="card card-stats padding">
           <div class="card-header card-header-primary card-header-icon ">
             <div class="card-icon printCard" >
               <div id="CarryForward_Chart">
-
              </div>
-              <!-- <i class="material-icons">store</i> -->
             </div>
             <p class="card-category">Carry Forward</p>
             <h3 class="card-title">{{statusCarryForward}}</h3>
@@ -120,9 +118,6 @@
 
               <div id="New_Chart">
             </div>
-              <!-- <i class="material-icons">
-                new_releases
-              </i> -->
             </div>
             <p class="card-category">New</p>
             <h3 class="card-title">{{statusNew}}</h3>
@@ -133,11 +128,7 @@
         <div class="card card-stats padding">
           <div class="card-header card-header-primary card-header-icon">
               <div class="card-icon printCard">
-
             <div id="Fixed_Chart">
-              <!-- <i class="material-icons">
-                assignment_turned_in
-              </i> -->
               </div>
             </div>
             <p class="card-category">Fixed</p>
@@ -149,21 +140,89 @@
           <div class="card card-stats padding">
             <div class="card-header card-header-primary card-header-icon">
                 <div class="card-icon printCard">
-
               <div id="Rejected_Chart">
-                <!-- <i class="material-icons">
-                  new_releases
-                </i> -->
-</div>              </div>
+              </div>
+            </div>
               <p class="card-category">Rejected</p>
               <h3 class="card-title">{{statusRejected}}</h3>
+          </div>
+        </div>
+     </div> 
+  </div>
+  <!-- <print card> -->
+   
+      <div *ngIf="role=='management'" class=" col-md-12 col-sm-12 col-xs-12  printCardContainer" style="display:none;" >
+        <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-6">
+        <div class="card card-stats padding">
+          <div class="card-header card-header-primary card-header-icon ">
+            <div class="card-icon printCard" >
+              <div id="CarryForward_Chart">
+
+             </div>
+              <!-- <i class="material-icons">store</i> -->
+            </div>
+            <div class="space-between">
+            <h4 class="card-category">Carry Forward</h4>
+            <h5 class="card-title">{{statusCarryForward}}</h5>
             </div>
           </div>
         </div>
-        
+      </div>
+    
+      <div class="col-lg-3 col-md-3 col-sm-6">
+        <div class="card card-stats padding">
+          <div class="card-header card-header-primary card-header-icon">
+            <div class="card-icon printCard">
 
+              <div id="New_Chart">
+            </div>
+              <!-- <i class="material-icons">
+                new_releases
+              </i> -->
+            </div>
+            <div class="space-between">
+            <h4 class="card-category">New</h4>
+            <h5 class="card-title">{{statusNew}}</h5>
+          </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-6">
+        <div class="card card-stats padding">
+          <div class="card-header card-header-primary card-header-icon">
+              <div class="card-icon printCard">
+
+            <div id="Fixed_Chart">
+              </div>
+            </div>
+            <div class="space-between">
+            <h4 class="card-category">Fixed</h4>
+            <h5 class="card-title">{{statusFixed}}</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-6">
+          <div class="card card-stats padding">
+            <div class="card-header card-header-primary card-header-icon">
+                <div class="card-icon printCard">
+
+              <div id="Rejected_Chart">
+              </div>
+            </div>
+            <div class="space-between">
+              <h4 class="card-category">Rejected</h4>
+              <h5 class="card-title">{{statusRejected}}</h5>
+            </div>
+          </div>
+        </div>
+      </div>  
+     </div> 
+     </div>
       <!-- Chart Cards -->
-      <div class="row">
+      <div class="row printChart">
 
         <ng-container *ngIf="role=='management'">
           <div class="col-md-6 col-sm-12">
@@ -172,7 +231,7 @@
 
                 <div id="Rating_Chart"></div>
               </div>
-              <div class="card-body">
+              <div class="card-body printChartpadding">
                 <h4 class="card-title"> Feedback </h4>
               </div>
             </div>
@@ -193,7 +252,7 @@
                 </div>
 
               </div>
-              <div class="card-body">
+              <div class="card-body printChartpadding">
                 <h4 class="card-title">Open Incidents</h4>
               </div>
             </div>
@@ -203,7 +262,7 @@
               <div class="card-header card-header-primary cardHeaderPrint">
                 <div id="Product_Incident_Age"></div>
               </div>
-              <div class="card-body">
+              <div class="card-body printChartpadding">
                 <h4 class="card-title"> Open Incidents Age (In Days)</h4>
               </div>
 
@@ -216,7 +275,7 @@
               <div class="card-header card-header-primary cardHeaderPrint">
                 <div id="product_status_Chart"></div>
               </div>
-              <div class="card-body">
+              <div class="card-body printChartpadding">
                 <h4 class="card-title">Incidents </h4>
               </div>
             </div>
@@ -227,7 +286,7 @@
               <div class="card-header card-header-primary cardHeaderPrint" >
                 <div id="repair_time"></div>
               </div>
-              <div class="card-body">
+              <div class="card-body printChartpadding">
                 <h4 class="card-title">Mean Time To Repair (in days)</h4>
               </div>
             </div>
@@ -243,7 +302,7 @@
               <div class="card-header card-header-primary cardHeaderPrint">
                 <div id="time_to_repair"></div>
               </div>
-              <div class="card-body">
+              <div class="card-body printChartpadding">
                 <h4 class="card-title"> Time To Repair</h4>
               </div>
             </div>
@@ -254,7 +313,7 @@
               <div class="card-header card-header-primary cardHeaderPrint">
                 <div id="regions_chart"></div>
               </div>
-              <div class="card-body">
+              <div class="card-body printChartpadding">
                 <h4 class="card-title"> Open Incidents</h4>
               </div>
             </div>
@@ -263,7 +322,7 @@
 
       </div>
       <!-- end of chart cards -->
-    </div>
+   
   </div>
 
 </div>

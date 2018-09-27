@@ -148,13 +148,42 @@ $main:#9c27b0;
     .printCard{
         display: none;
     }
+    .printCardContainer{
+        display:block!important;
+    }
     .printHeader{
+        padding: 0;
+        // margin-top: -20px;
         display: block !important;
     }
     .dekstopHeader{
         display: none;
     }
+    .deksCardContainer{
+        display: none;
+    }
+    .containerPrint{
+        margin-top: -15px;
+    }
     .cardHeaderPrint{
+        padding: 0 !important;
         background: white !important;
+    }
+    .printChartpadding{
+        padding: 0 !important;
+        text-align: center!important;
+      
+    }
+    .printChart{
+        margin-top: -20px;
+    }
+    .heading{
+        margin-top: -85px;
+    }
+    .footer{
+        display: none;
+    }
+    .navbarPrint{
+        display: none;
     }
    }
