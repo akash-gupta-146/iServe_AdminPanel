@@ -166,6 +166,9 @@ $main:#9c27b0;
         margin-top: -15px;
     }
     .cardHeaderPrint{
+        border: 2px solid black;
+        border-bottom:2px solid black!important;
+        margin-top: 4px;
         padding: 0 !important;
         background: white !important;
     }
@@ -185,5 +188,14 @@ $main:#9c27b0;
     }
     .navbarPrint{
         display: none;
+    }
+    .printFixedChart{
+        display: block!important;
+    }
+    .deksFixedChart{
+        display: none;
+    }
+    .margin{
+        margin-top: 6px;
     }
    }

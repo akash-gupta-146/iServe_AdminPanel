@@ -70,7 +70,8 @@
             </li>
             
             
-            <li class="nav-item hover-cursor " *ngIf="showRange">
+            <li class="nav-item hover-cursor " *ngIf="showRange" style="margin-left: 29px;
+            margin-top: 10px;">
                 <div class="input-group input-daterange">
                   Range   {{dateRange.startDate}}  To  {{dateRange.endDate}}
                   
@@ -162,7 +163,7 @@
              </div>
               <!-- <i class="material-icons">store</i> -->
             </div>
-            <div class="space-between">
+            <div class="space-between margin">
             <h4 class="card-category">Carry Forward</h4>
             <h5 class="card-title">{{statusCarryForward}}</h5>
             </div>
@@ -181,7 +182,7 @@
                 new_releases
               </i> -->
             </div>
-            <div class="space-between">
+            <div class="space-between margin">
             <h4 class="card-category">New</h4>
             <h5 class="card-title">{{statusNew}}</h5>
           </div>
@@ -197,7 +198,7 @@
             <div id="Fixed_Chart">
               </div>
             </div>
-            <div class="space-between">
+            <div class="space-between margin">
             <h4 class="card-category">Fixed</h4>
             <h5 class="card-title">{{statusFixed}}</h5>
             </div>
@@ -212,7 +213,7 @@
               <div id="Rejected_Chart">
               </div>
             </div>
-            <div class="space-between">
+            <div class="space-between margin">
               <h4 class="card-category">Rejected</h4>
               <h5 class="card-title">{{statusRejected}}</h5>
             </div>
@@ -225,19 +226,92 @@
       <div class="row printChart">
 
         <ng-container *ngIf="role=='management'">
-          <div class="col-md-6 col-sm-12">
-            <div class="card card-chart">
-              <div class="card-header card-header-primary cardHeaderPrint">
-
-                <div id="Rating_Chart"></div>
+          <!-- <div class="col-md-12 col-lg-12 col-sm-12">
+            <div class="row">
+              <div class="col-md-6 col-lg-6">
+                  <div class="card card-chart">
+                      <div class="card-header card-header-primary cardHeaderPrint">
+        
+                        <div id="Rating_Chart"></div>
+                      </div>
+                      <div class="card-body printChartpadding">
+                        <h4 class="card-title"> Feedback </h4>
+                      </div>
+                    </div>
               </div>
-              <div class="card-body printChartpadding">
-                <h4 class="card-title"> Feedback </h4>
+            <div class="col-md-6 col-lg-6">
+              <div  class="col-md-12 col-lg-12">
+                  <div class="card ">
+                      <div class="card-header card-header-primary cardHeaderPrint">
+                        <div class="row">
+                            <div class="col-md-6">
+                          
+                                <div   id="out_Warranty_Status"></div>
+                              </div>
+                              <div class="col-md-6">
+                                <div  id="in_Warranty_Status"></div>
+              
+                              </div>
+                        </div>
+        
+                      </div>
+                      <div class="card-body printChartpadding">
+                        <h4 class="card-title">Open Incidents</h4>
+                      </div>
+                    </div>
+              </div>
+              
+          <div class="col-md-12 col-sm-12">
+              <div class="card card-chart">
+                <div class="card-header card-header-primary cardHeaderPrint">
+                  <div id="Product_Incident_Age"></div>
+                </div>
+                <div class="card-body printChartpadding">
+                  <h4 class="card-title"> Open Incidents Age (In Days)</h4>
+                </div>
+  
               </div>
             </div>
+            </div>
           </div>
+            </div> -->
+            <!-- <div class="col-md-12 col-sm-12 printFixedChart" style="display:none;">
+                <div class="card card-chart">
+                  <div  class="card-header card-header-primary cardHeaderPrint">
+  
+                    <div id="Rating_Chart"
+                    ></div>
+                  </div>
+                  <div class="card-body printChartpadding">
+                    <h4 class="card-title"> Feedback </h4>
+                  </div>
+                </div>
+              </div>  -->
+            <div class="col-md-6 col-sm-12 deksFixedChart">
+              <div class="card card-chart">
+                <div (window:resize)="getCharts()" class="card-header card-header-primary cardHeaderPrint">
+
+                  <div id="Rating_Chart"></div>
+                </div>
+                <div class="card-body printChartpadding">
+                  <h4 class="card-title"> Feedback </h4>
+                </div>
+              </div>
+            </div> 
+            <div class="col-md-12 col-sm-12 printFixedChart" style="display:none;">
+                <div class="card card-chart">
+                  <div  class="card-header card-header-primary cardHeaderPrint">
+  
+                    <div id="Rating_ChartPrint" ></div>
+                  </div>
+                  <div class="card-body printChartpadding">
+                    <h4 class="card-title"> Feedback </h4>
+                  </div>
+                </div>
+              </div> 
+  
          
-          <div class="col-md-6 col-sm-12">
+           <div class="col-md-6 col-sm-12">
             <div class="card ">
               <div class="card-header card-header-primary cardHeaderPrint">
                 <div class="row">
@@ -257,6 +331,7 @@
               </div>
             </div>
           </div>
+          
           <div class="col-md-6 col-sm-12">
             <div class="card card-chart">
               <div class="card-header card-header-primary cardHeaderPrint">
@@ -297,7 +372,7 @@
             </div>
           </div> -->
 
-          <div class="col-md-6 col-sm-12">
+          <div class="col-md-6 col-sm-12 deksFixedChart">
             <div class="card card-chart">
               <div class="card-header card-header-primary cardHeaderPrint">
                 <div id="time_to_repair"></div>
@@ -307,6 +382,16 @@
               </div>
             </div>
           </div>
+          <div class="col-md-6 col-sm-12 printFixedChart " style="display:none;">
+              <div class="card card-chart">
+                <div class="card-header card-header-primary cardHeaderPrint">
+                  <div id="time_to_repairPrint"></div>
+                </div>
+                <div class="card-body printChartpadding">
+                  <h4 class="card-title"> Time To Repair</h4>
+                </div>
+              </div>
+            </div>
 
           <div class="col-md-6 col-sm-12">
             <div class="card card-chart">
