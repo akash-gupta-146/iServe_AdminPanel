@@ -235,29 +235,27 @@ export class DashboardComponent implements OnInit {
 
     let options = {
       height: 200,
-
-    // chartArea:{
-    //   height:200,
-    //   width:120,
-    // },
-
-
       seriesType: 'bars',
       series: { 6: { type: 'line' } },
-
-      // bar: { groupWidth: '75%' },
       legend: { position: 'top', maxLines: 6 },
-      // isStacked: true,
-
       colors: ['#e91e63', '#01adc2', '#fd9710', '#4ba64f', '#9d36b3', '#FFFF00', '#AA00FF', '#9E9D24'],
-      // animation: {
-      //   "startup": true,
-      //   duration: 600,
-      //   easing: 'in-out'
-      // }
+    };
+    let optionsPrint = {
+      height: 250,
+      width:950,
+      chartArea:{
+        width:600,
+      },
+      seriesType: 'bars',
+      // series: { 6: { type: 'line' } },
+      legend: { position: 'right', maxLines:8 },
+      colors: ['#e91e63', '#01adc2', '#fd9710', '#4ba64f', '#9d36b3', '#FFFF00', '#AA00FF', '#9E9D24'],
     };
 
     let chart = new google.visualization.ComboChart(document.getElementById('Rating_Chart'));
+    let chartPrint = new google.visualization.ComboChart(document.getElementById('Rating_ChartPrint'));
+    
+
     google.visualization.events.addListener(chart, 'select', () => {
       var selectedItem = chart.getSelection()[0];
 
@@ -273,6 +271,7 @@ export class DashboardComponent implements OnInit {
 
 
     chart.draw(data, options);
+    chartPrint.draw(data, optionsPrint);
   }
 
 
@@ -290,6 +289,7 @@ export class DashboardComponent implements OnInit {
         this.newChart = [];
         this.rejectedChart = [];
         this.fixedChart = [];
+        this.statusByProductCat = [];
 
         this.statusByProductCatIds = []
 
@@ -569,6 +569,9 @@ export class DashboardComponent implements OnInit {
 
     this.dashboardservice.getAVG(this.filter, this.valFalse)
       .subscribe((res: any) => {
+        this.mttrTillDate = [];
+
+        
         this.mttrTillDate.push(['Appliances', 'Customer', 'Engineer', 'Repair', 'avg'])
         console.log(res[0]["avgResolveTimeInfo"]);
         res[0]["avgResolveTimeInfo"].forEach(element => {
@@ -859,11 +862,6 @@ length:120,
 
     var options = {
       height: 200,
-
-      // chartArea: {
-      //   left: 80,
-      // },
-
       legend: { position: 'top', maxLines: 7 },
       bar: { groupWidth: '75%' },
       isStacked: true,
@@ -875,8 +873,23 @@ length:120,
         easing: 'in-out'
       }
     };
+    var optionsPrint = {
+      height: 300,
+chartArea:{
+},
+      legend: { position: 'right', maxLines:8},
+      // bar: { groupWidth: '75%' },
+      isStacked: true,
 
+      colors: ['#e91e63', '#01adc2', '#fd9710', '#4ba64f', '#9d36b3', '#FFFF00', '#AA00FF', '#9E9D24'],
+      animation: {
+        "startup": true,
+        duration: 600,
+        easing: 'in-out'
+      }
+    };
     var chart = new google.visualization.BarChart(document.getElementById('time_to_repair'));
+    var chartPrint = new google.visualization.BarChart(document.getElementById('time_to_repairPrint'));
 
 
 
@@ -893,6 +906,7 @@ length:120,
     });
 
 
+    chartPrint.draw(data, optionsPrint);
 
 
 
