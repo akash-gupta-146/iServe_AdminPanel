@@ -58,7 +58,6 @@ export class EditUserDetailsComponent implements OnInit {
 
     if (this.toBeEdit == 'Name') {
 
-      // localStorage.setItem("name", data.name)
       this.loginService.updateUsername(data.name);
     }
     if (this.toBeEdit == 'Email') {
@@ -104,9 +103,7 @@ export class EditUserDetailsComponent implements OnInit {
         this.closeFormModal()
         this.resetForm();
         this.tostservice.showNotificationSuccess("change successfuly");
-        $('#filed').show();
-        $('#filedmail').show();
-        $('#filedPhone').show();
+       
 
 
 
@@ -125,26 +122,19 @@ export class EditUserDetailsComponent implements OnInit {
     if (this.toBeEdit == 'Name') {
 
       this.toBeEditValue = this.editManagerDetails.name;
-      $('#filed').hide();
-      $('#filedmail').show();
-      $('#filedPhone').show();
-
+   
 
     }
     if (this.toBeEdit == 'Email') {
 
       this.toBeEditValue = this.editManagerDetails.email;
-      $('#filedmail').hide();
-      $('#filed').show();
-      $('#filedPhone').show();
+    
 
     }
     if (this.toBeEdit == 'Contact No') {
 
       this.toBeEditValue = this.editManagerDetails.contactNo;
-      $('#filedPhone').hide();
-      $('#filed').show();
-      $('#filedmail').show();
+    
 
     }
   }
@@ -154,9 +144,7 @@ export class EditUserDetailsComponent implements OnInit {
     this.urlTOShowImg = null;
     this.formButtonHide = false;
     this.closeFormModal();
-    $('#filed').show();
-    $('#filedmail').show();
-    $('#filedPhone').show();
+    this.toBeEdit = '';
 
   }
 
