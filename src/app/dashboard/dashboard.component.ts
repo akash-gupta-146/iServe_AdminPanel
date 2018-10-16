@@ -827,74 +827,74 @@ this.totalInWarranty=0;
 
 
 
-  // get_Product_Incident_Age() {
-  //   this.dashboardservice.getProductIncidentAge(this.filter, this.valFalse)
-  //     .subscribe((res: any) => {
+  get_Product_Incident_Age() {
+    this.dashboardservice.getProductIncidentAge(this.filter, this.valFalse)
+      .subscribe((res: any) => {
 
-  //       this.Product_Incident_Age_chart(res);
-  //     }, (err) => {
-  //       this.tostservice.showNotificationFailure(err)
-  //     }
-  //     );
+        this.Product_Incident_Age_chart(res);
+      }, (err) => {
+        this.tostservice.showNotificationFailure(err)
+      }
+      );
 
-  // }
-  // Product_Incident_Age_chart(data: any[]) {
-  //   this.incidentId = [];
-  //   var dataTable: any = [[]];
+  }
+  Product_Incident_Age_chart(data: any[]) {
+    this.incidentId = [];
+    var dataTable: any = [[]];
 
-  //   dataTable[0].push('range');
-  //   for (let i = 0; i < data[0].ageInfo.length; i++) {
-  //     dataTable[0].push(data[0].ageInfo[i].name);
-  //   }
+    dataTable[0].push('range');
+    for (let i = 0; i < data[0].ageInfo.length; i++) {
+      dataTable[0].push(data[0].ageInfo[i].name);
+    }
 
-  //   for (let k = 0; k < data[0].ageInfo.length; k++) {
-  //     this.incidentId.push(data[0].ageInfo[k].id);
-  //   }
+    for (let k = 0; k < data[0].ageInfo.length; k++) {
+      this.incidentId.push(data[0].ageInfo[k].id);
+    }
 
-  //   for (let i = 0; i < data.length; i++) {
-  //     dataTable[i + 1] = [];
-  //     dataTable[i + 1].push(data[i].range);
-  //     for (let j = 0; j < data[i].ageInfo.length; j++) {
-  //       dataTable[i + 1].push(data[i].ageInfo[j].count);
-  //     }
-  //   }
-
-
-  //   var data1 = google.visualization.arrayToDataTable(dataTable);
-  //   var options = {
-  //     height: 200,
+    for (let i = 0; i < data.length; i++) {
+      dataTable[i + 1] = [];
+      dataTable[i + 1].push(data[i].range);
+      for (let j = 0; j < data[i].ageInfo.length; j++) {
+        dataTable[i + 1].push(data[i].ageInfo[j].count);
+      }
+    }
 
 
-  //     seriesType: 'bars',
-  //     legend: { position: 'none', },
-  //     colors: ['#e91e63', '#01adc2', '#fd9710', '#4ba64f', '#9d36b3', '#FFFF00', '#AA00FF', '#9E9D24'],
-  //     animation: {
-  //       "startup": true,
-  //       duration: 600,
-  //       easing: 'in-out'
-  //     }
-  //   };
+    var data1 = google.visualization.arrayToDataTable(dataTable);
+    var options = {
+      height: 200,
 
 
-  //   var chart = new google.visualization.ComboChart(document.getElementById('Product_Incident_Age'));
+      seriesType: 'bars',
+      legend: { position: 'none', },
+      colors: ['#e91e63', '#01adc2', '#fd9710', '#4ba64f', '#9d36b3', '#FFFF00', '#AA00FF', '#9E9D24'],
+      animation: {
+        "startup": true,
+        duration: 600,
+        easing: 'in-out'
+      }
+    };
 
 
-  //   google.visualization.events.addListener(chart, 'select', () => {
-  //     var selectedItem = chart.getSelection()[0];
-  //     console.log(selectedItem)
+    var chart = new google.visualization.ComboChart(document.getElementById('Product_Incident_Age'));
 
 
-  //     if (selectedItem) {
-  //       console.log(this.incidentId[selectedItem.column - 1]);
+    google.visualization.events.addListener(chart, 'select', () => {
+      var selectedItem = chart.getSelection()[0];
+      console.log(selectedItem)
 
 
-  //       this.routeToIncidents(this.incidentId[selectedItem.column - 1], 'incident-age', dataTable[selectedItem.row + 1][0], '', '', '');
-  //     }
-  //   });
+      if (selectedItem) {
+        console.log(this.incidentId[selectedItem.column - 1]);
 
 
-  //   chart.draw(data1, options);
-  // }
+        this.routeToIncidents(this.incidentId[selectedItem.column - 1], 'incident-age', dataTable[selectedItem.row + 1][0], '', '', '');
+      }
+    });
+
+
+    chart.draw(data1, options);
+  }
 
 
 
@@ -1065,7 +1065,7 @@ console.log(res);
 
 
   getCharts() {
-    // this.get_Product_Incident_Age();
+    this.get_Product_Incident_Age();
     this.getMeanTime();
     this.getDashboardDetails();
     this.get_Product_Status();
