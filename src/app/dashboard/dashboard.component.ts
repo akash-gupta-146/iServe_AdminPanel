@@ -301,8 +301,22 @@ this.ProCategoryName=[];
         easing: 'in-out'
       }
     };
+    // let optionsPrint = {
+    //   height: 250,
+    //   width:950,
+    //   chartArea:{
+    //     width:600,
+    //   },
+    //   seriesType: 'bars',
+    //   // series: { 6: { type: 'line' } },
+    //   legend: { position: 'right', maxLines:8 },
+    //   colors: ['#e91e63', '#01adc2', '#fd9710', '#4ba64f', '#9d36b3', '#FFFF00', '#AA00FF', '#9E9D24'],
+    // };
 
     let chart = new google.visualization.ComboChart(document.getElementById('Rating_Chart'));
+    // let chartPrint = new google.visualization.ComboChart(document.getElementById('Rating_ChartPrint'));
+    
+
     google.visualization.events.addListener(chart, 'select', () => {
       var selectedItem = chart.getSelection()[0];
 
@@ -318,6 +332,7 @@ this.ProCategoryName=[];
 
 
     chart.draw(data, options);
+    // chartPrint.draw(data, optionsPrint);
   }
 
 
@@ -335,6 +350,7 @@ this.ProCategoryName=[];
         this.newChart = [];
         this.rejectedChart = [];
         this.fixedChart = [];
+        this.statusByProductCat = [];
 
         this.statusByProductCatIds = []
 
@@ -458,10 +474,10 @@ this.ProCategoryName=[];
     var data = google.visualization.arrayToDataTable(this.newChart);
 
     var options = {
-      chartArea: {
-        width: 120,
-        height: 120,
-
+      chartArea:
+      {
+        width:100,
+        height:100,
       },
       width: 80,
       height: 80,
@@ -491,13 +507,13 @@ this.ProCategoryName=[];
     var data = google.visualization.arrayToDataTable(this.fixedChart);
 
     var options = {
-      chartArea: {
-        width: 120,
-        height: 120,
-
+      chartArea:
+      {
+        width: 80,
+        height: 80,
       },
-      width: 80,
-      height: 80,
+      width:80,
+      height:80,
       legend: { position: 'none', maxLines: 8 },
       colors: ['#e91e63', '#01adc2', '#fd9710', '#4ba64f', '#9d36b3', '#FFFF00', '#AA00FF', '#9E9D24'],
 
@@ -1024,8 +1040,23 @@ console.log(res);
         easing: 'in-out'
       }
     };
+//     var optionsPrint = {
+//       height: 300,
+// chartArea:{
+// },
+    //   legend: { position: 'right', maxLines:8},
+    //   // bar: { groupWidth: '75%' },
+    //   isStacked: true,
 
+    //   colors: ['#e91e63', '#01adc2', '#fd9710', '#4ba64f', '#9d36b3', '#FFFF00', '#AA00FF', '#9E9D24'],
+    //   animation: {
+    //     "startup": true,
+    //     duration: 600,
+    //     easing: 'in-out'
+    //   }
+    // };
     var chart = new google.visualization.BarChart(document.getElementById('time_to_repair'));
+    // var chartPrint = new google.visualization.BarChart(document.getElementById('time_to_repairPrint'));
 
 
 
@@ -1042,6 +1073,7 @@ console.log(res);
     });
 
 
+    // chartPrint.draw(data, optionsPrint);
 
 
 
